@@ -11,7 +11,8 @@ from .predictions import get_embeddings, get_cosine_distance
 app = Flask(__name__)
 
 DATA_DIR = 'data_files/'
-THRESHOLD = 0.45    # play with this value. you may get better results
+THRESHOLD = 0.45
+POSITVE_MEAN_THRESHOLD = .65  
 
 sys.path.append('..')
 
@@ -23,19 +24,30 @@ def home():
 
 @app.route('/login/<string:username>', methods=['POST'])
 def login(username):
-
     filename = _save_file(request, username)
+    print(f"Saved file for user {username}: {filename}", flush=True)
+    
     fbanks = extract_fbanks(filename)
+    print(f"Extracted fbanks: {fbanks.shape}", flush=True)
+    
     embeddings = get_embeddings(fbanks)
+    print(f"Generated embeddings: {embeddings.shape}", flush=True)
+    
     stored_embeddings = np.load(DATA_DIR + username + '/embeddings.npy')
     stored_embeddings = stored_embeddings.reshape((1, -1))
-
+    print(f"Loaded stored embeddings: {stored_embeddings.shape}", flush=True)
+    
     distances = get_cosine_distance(embeddings, stored_embeddings)
-    print('mean distances', np.mean(distances), flush=True)
+    print(f"Cosine distances: {distances}", flush=True)
+    
+    mean_distance = np.mean(distances)
+    print(f"Mean distance: {mean_distance}", flush=True)
+    
     positives = distances < THRESHOLD
     positives_mean = np.mean(positives)
-    print('positives mean: {}'.format(positives_mean), flush=True)
-    if positives_mean >= .65:
+    print(f"Positives mean: {positives_mean}", flush=True)
+    
+    if positives_mean >= POSITVE_MEAN_THRESHOLD:
         return Response('SUCCESS', mimetype='application/json')
     else:
         return Response('FAILURE', mimetype='application/json')
@@ -44,11 +56,20 @@ def login(username):
 @app.route('/register/<string:username>', methods=['POST'])
 def register(username):
     filename = _save_file(request, username)
+    print(f"Saved file for user {username}: {filename}", flush=True)
+    
     fbanks = extract_fbanks(filename)
+    print(f"Extracted fbanks: {fbanks.shape}", flush=True)
+    
     embeddings = get_embeddings(fbanks)
-    print('shape of embeddings: {}'.format(embeddings.shape), flush=True)
+    print(f"Generated embeddings: {embeddings.shape}", flush=True)
+    
     mean_embeddings = np.mean(embeddings, axis=0)
+    print(f"Mean embeddings: {mean_embeddings.shape}", flush=True)
+    
     np.save(DATA_DIR + username + '/embeddings.npy', mean_embeddings)
+    print(f"Saved embeddings to {DATA_DIR + username + '/embeddings.npy'}", flush=True)
+    
     return Response('', mimetype='application/json')
 
 
