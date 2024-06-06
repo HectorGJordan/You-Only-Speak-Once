@@ -4,7 +4,7 @@
 ## Introduction
 Biometric authentication systems rely on some kind of visual input, such as fingerprints and Face ID. However, devices like Alexa only receive audio as input that can be leveraged for authentication.
 Our project aims to develop a one shot learning based voice authentication system using siamese network. We intend to develop a neural speaker embedding system that maps utterances to a hyperspace where speaker similarity is measured by cosine similarity.  
-## Related Work
+## Related Work 
 One shot learning has been widely used for face recognition, but not as thoroughly explored for voice authentication, which is where our experimentations add some value. Our work is majorly motivated and aggregated from the following research:
 DeepFace, which uses siamese networks to compute embeddings for image classification
 FaceNet, which presents the concept of a triplet loss optimizing for distance between similar and dissimilar embeddings
