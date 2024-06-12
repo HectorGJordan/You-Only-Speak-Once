@@ -49,7 +49,7 @@ def get_fbanks(audio_file):
         return np.array([(v - np.mean(v)) / max(np.std(v), epsilon) for v in signal])
 
     y, sr = librosa.load(audio_file, sr=None)
-    assert sr == 16000
+    assert sr == 44100
 
     trim_len = int(0.25 * sr)
     if y.shape[0] < 1 * sr:
@@ -59,7 +59,7 @@ def get_fbanks(audio_file):
     y = y[trim_len:-trim_len]
 
     # frame width of 25 ms with a stride of 10 ms. This will have an overlap of 15s
-    filter_banks, energies = psf.fbank(y, samplerate=sr, nfilt=64, winlen=0.025, winstep=0.01)
+    filter_banks, energies = psf.fbank(y, samplerate=sr, nfilt=64, winlen=0.025, winstep=0.01, nfilt=40, nfft=2048) 
     filter_banks = normalize_frames(signal=filter_banks)
 
     filter_banks = filter_banks.reshape((filter_banks.shape[0], 64, 1))

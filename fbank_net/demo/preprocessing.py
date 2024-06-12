@@ -19,7 +19,7 @@ def get_fbanks(audio_file):
     y = y[trim_len:-trim_len]
 
     # frame width of 25 ms with a stride of 15 ms. This will have an overlap of 10s
-    filter_banks, energies = psf.fbank(y, samplerate=sr, nfilt=64, winlen=0.025, winstep=0.01)
+    filter_banks, energies = psf.fbank(y, samplerate=sr, nfilt=64, winlen=0.025, winstep=0.01, nfilt=40, nfft=2048)
     filter_banks = normalize_frames(signal=filter_banks)
 
     filter_banks = filter_banks.reshape((filter_banks.shape[0], 64, 1))
