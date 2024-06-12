@@ -8,8 +8,8 @@ def get_fbanks(audio_file):
     def normalize_frames(signal, epsilon=1e-12):
         return np.array([(v - np.mean(v)) / max(np.std(v), epsilon) for v in signal])
 
-    y, sr = librosa.load(audio_file, sr=16000)
-    assert sr == 16000
+    y, sr = librosa.load(audio_file, sr=44100)
+    assert sr == 44100
 
     trim_len = int(0.25 * sr)
     if y.shape[0] < 1 * sr:
